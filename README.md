@@ -8,6 +8,10 @@ Research-grade US market data and server-side backtests for AI agents: Claude, C
 **Auth:** OAuth 2.1 with PKCE (sign in with your FinzData API key), or the header `Authorization: Bearer YOUR_API_KEY`
 **Free key:** https://finzdata.com/signin · Pricing: https://finzdata.com/pricing · Agent docs: https://api.finzdata.com/agents.md
 
+## Coverage
+
+Market data your backtests can trust. The whole market, remembered: every one of the 16,000+ US stocks that has traded on the NYSE and Nasdaq in the last 26+ years, delisted included, point in time. Around them, options-market gamma for single stocks, ETFs and the major indexes, 231 ETFs, crypto since 2015, macro exactly as it was known, COT positioning, and 1-minute to daily bars. In pandas with one line: `pip install finzdata`.
+
 ## Why FinzData for agents
 
 - **Survivorship-free.** Universes include every company that traded on a date, delisted names included.
