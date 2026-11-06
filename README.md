@@ -6,11 +6,11 @@ Research-grade US market data and server-side backtests for AI agents: Claude, C
 
 **Remote server:** `https://api.finzdata.com/mcp` (Streamable HTTP, MCP 2026-07-28, accepts 2025-06-18 clients)
 **Auth:** OAuth 2.1 with PKCE (sign in with your FinzData API key), or the header `Authorization: Bearer YOUR_API_KEY`
-**Free key:** https://finzdata.com/signin · Pricing: https://finzdata.com/pricing · Agent docs: https://api.finzdata.com/agents.md
+**Free key:** https://finzdata.com/signin · Pricing: https://finzdata.com/shop · Agent docs: https://api.finzdata.com/agents.md
 
 ## Coverage
 
-Market data your backtests can trust. The whole market, remembered: every one of the 16,000+ US stocks that has traded on the NYSE and Nasdaq in the last 26+ years, delisted included, point in time. Around them: 139 futures markets with every contract since 2007, the VIX and Cboe volatility indexes with the VIX futures curve, options-market gamma for single stocks, ETFs and the major indexes, 231 ETFs, and crypto since 2015. Macro exactly as it was known: 18,000+ series including CPI, payrolls, wages, GDP and the Treasury yield curve, every vintage kept. Plus COT positioning since 1986. Bars at every resolution you backtest on: 1-minute, 5-minute, 15-minute, 30-minute, hourly and daily, with tick-level trades on the Institutional plan. In pandas with one line: `pip install finzdata`.
+Market data your backtests can trust. The whole market, remembered: every one of the 16,000+ US stocks that has traded on the NYSE and Nasdaq in the last 26+ years, delisted included, point in time. Around them: 139 futures markets with every contract since 2007, the VIX and Cboe volatility indexes with the VIX futures curve, options-market gamma (GEX) for 11,200+ stocks, ETFs and indexes since 2010 plus end-of-day options chains, 5,100+ ETFs, 74 crypto pairs (Bitcoin since 2013), 79 FX pairs and 123 indexes. Macro exactly as it was known: 22,700+ series including CPI, payrolls, wages, GDP and the Treasury yield curve, every vintage kept. Plus COT positioning since 1986, 13F holdings, insider trades, short interest, congressional trades, election spending and Global Macro Pulse (shipping, ports, air and road traffic). Bars at every resolution you backtest on: 1-minute, 5-minute, 15-minute, 30-minute, hourly and daily, and tick-level trades for 1,100+ stocks and ETFs. In pandas with one line: `pip install finzdata`.
 
 ## Why FinzData for agents
 
@@ -24,7 +24,7 @@ Market data your backtests can trust. The whole market, remembered: every one of
 |---|---|
 | `search_datasets` / `describe_dataset` | The catalog, fields and coverage |
 | `get_universe` | Every US symbol trading on a date, or the 500/1000/3000 most-traded |
-| `get_bars` | Daily and 1-minute OHLCV, split-adjusted |
+| `get_bars` | Daily and intraday OHLCV (1, 5, 15, 30-minute, hourly), split-adjusted |
 | `get_fundamentals_pit` | Valuation and fundamentals as known on a date (P/E, EV/EBITDA, revenue, debt…) |
 | `get_macro_vintage` | FRED/ALFRED series exactly as published by a date |
 | `get_cot` | CFTC Commitments of Traders positioning |
