@@ -1,0 +1,13 @@
+{
+  "name": "finzdata",
+  "displayName": "FinzData",
+  "version": "1.0.0",
+  "description": "Point-in-time market data and server-side backtests for AI agents: 16,000+ US stocks since 2000 incl. delisted, 5,100+ ETFs, ticks, 139 futures markets, options gamma (GEX), options chains, VIX, 123 indexes, 79 FX pairs, 512 crypto pairs, SEC fundamentals as filed, 13F, COT since 1986, 22,700+ macro series with every vintage, Global Macro Pulse and the FinzData Workspace. 40 tools; no key needed to start.",
+  "author": { "name": "FinzData", "email": "info@finzdata.com", "url": "https://finzdata.com" },
+  "homepage": "https://finzdata.com",
+  "repository": "https://github.com/FinzData/finzdata-mcp",
+  "license": "MIT",
+  "logo": "assets/logo.png",
+  "keywords": ["finance", "market-data", "backtesting", "stocks", "futures", "options", "gex", "crypto", "fx", "macro", "point-in-time", "mcp"],
+  "mcpServers": "./mcp.json"
+}

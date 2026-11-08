@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "finzdata": {
+      "url": "https://api.finzdata.com/mcp"
+    },
+    "finzdata-workspace": {
+      "url": "https://workspace.finzdata.com/mcp"
+    }
+  }
+}
