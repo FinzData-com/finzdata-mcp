@@ -5,12 +5,12 @@ build-backend = "hatchling.build"
 [project]
 name = "finzdata-mcp"
 version = "0.1.0"
-description = "FinzData MCP server: US market data (prices, intraday, COT, macro, short interest, 13F) inside AI assistants. Free tier: last 12 months."
+description = "FinzData MCP server: point-in-time US stocks incl. delisted, ETFs, ticks, 139 futures markets, options GEX and chains, VIX, indexes, FX, crypto, COT, 13F, SEC fundamentals, 22,700+ macro vintages, Global Macro Pulse and server-side backtests for AI agents."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "FinzData", email = "info@finzdata.com" }]
-keywords = ["mcp", "market data", "stock api", "financial data", "historical stock data", "intraday", "cot", "fred"]
+keywords = ["mcp", "market data", "stock api", "financial data", "historical stock data", "intraday", "tick data", "futures", "options", "gamma exposure", "crypto", "forex", "macroeconomics", "cot", "13f", "backtesting", "point-in-time"]
 dependencies = ["mcp>=1.2"]
 
 [project.urls]
