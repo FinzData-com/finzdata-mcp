@@ -1,0 +1,1093 @@
+{
+  "identifier": "finzdata",
+  "name": "FinzData",
+  "version": "0.3.0",
+  "author": "FinzData",
+  "authorUrl": "https://github.com/FinzData",
+  "cloudEndpoint": "https://api.finzdata.com/mcp",
+  "homepage": "https://finzdata.com",
+  "icon": "https://finzdata.com/assets/brand/finzdata-logo-full-square.png",
+  "description": "Point-in-time market data and server-side backtests for AI agents: 16,000+ US stocks since 2000 incl. delisted, 5,100+ ETFs, ticks, 139 futures markets, options gamma (GEX), options chains, VIX, 123 indexes, 79 FX pairs, 512 crypto pairs, SEC fundamentals as filed, 13F, insider trades, short interest, COT since 1986, 22,700+ macro series with every vintage, Global Macro Pulse, Quantitative Model, congressional trades. 40 tools; no key needed to start.",
+  "tags": [
+    "finance",
+    "market-data",
+    "backtesting",
+    "stocks",
+    "etfs",
+    "futures",
+    "options",
+    "gex",
+    "crypto",
+    "fx",
+    "macro",
+    "fundamentals",
+    "13f",
+    "cot",
+    "point-in-time"
+  ],
+  "tools": [
+    {
+      "name": "search_datasets",
+      "description": "Full-text search over the dataset catalog. Returns matching dataset ids and descriptions. Free of look-ahead concerns; no as_of needed.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search text."
+          }
+        },
+        "required": [
+          "query"
+        ]
+      }
+    },
+    {
+      "name": "describe_dataset",
+      "description": "Returns the schema, coverage and field definitions of one dataset. Raises not_found for an unknown dataset id.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "dataset": {
+            "type": "string",
+            "description": "Dataset id."
+          }
+        },
+        "required": [
+          "dataset"
+        ]
+      }
+    },
+    {
+      "name": "get_universe",
+      "description": "Returns every US symbol that was trading on as_of, including companies that later delisted (survivorship-free). index='top500'|'top1000'|'top3000' instead returns the most-traded names priced at least $5 that day, ranked by 63-day dollar volume (a point-in-time large-cap proxy, not official S&P or Russell membership). Pages of 500; pass offset. as_of defaults to today.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "as_of": {
+            "type": "string",
+            "description": "Point-in-time cutoff (YYYY-MM-DD). Nothing dated after this is returned, preventing look-ahead bias. Defaults to today (UTC)."
+          },
+          "index": {
+            "type": "string",
+            "enum": [
+              "top500",
+              "top1000",
+              "top3000"
+            ],
+            "description": "Optional liquidity-ranked subset."
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Paging offset (default 0)."
+          },
+          "prefix": {
+            "type": "string",
+            "description": "Only symbols starting with this."
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "get_bars",
+      "description": "Returns daily OHLCV bars for symbols between start and end, clipped to as_of (default today) so no future data leaks. Max 5000 rows per page; use next_cursor for more.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "symbols": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "start": {
+            "type": "string"
+          },
+          "end": {
+            "type": "string"
+          },
+          "bar": {
+            "type": "string",
+            "description": "Bar size: '1d' (default), or intraday '1m', '5m', '15m', '30m', '1h' (paid bundles)."
+          },
+          "as_of": {
+            "type": "string",
+            "description": "Point-in-time cutoff (YYYY-MM-DD). Nothing dated after this is returned, preventing look-ahead bias. Defaults to today (UTC)."
+          }
+        },
+        "required": [
+          "symbols",
+          "start"
+        ]
+      }
+    },
+    {
+      "name": "backtest_export",
+      "description": "Daily OHLCV bars for one symbol packaged as ready-to-load files for an open-source backtester or trading framework: backtrader, backtesting_py, vectorbt, zipline (csvdir bundle), lean (QuantConnect LEAN, base64 zip), nautilus, freqtrade or qlib. Returns files (path, encoding, content) and load_code. Write each file at its path, then run load_code. Clipped to as_of; start defaults to 365 days before end.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string"
+          },
+          "framework": {
+            "type": "string",
+            "enum": [
+              "backtrader",
+              "backtesting_py",
+              "vectorbt",
+              "zipline",
+              "lean",
+              "nautilus",
+              "freqtrade",
+              "qlib"
+            ]
+          },
+          "start": {
+            "type": "string"
+          },
+          "end": {
+            "type": "string"
+          },
+          "as_of": {
+            "type": "string",
+            "description": "Point-in-time cutoff (YYYY-MM-DD). Nothing dated after this is returned, preventing look-ahead bias. Defaults to today (UTC)."
+          }
+        },
+        "required": [
+          "symbol"
+        ]
+      }
+    },
+    {
+      "name": "get_fundamentals_pit",
+      "description": "Returns fundamentals for one symbol as known on as_of (no restatements from the future). as_of defaults to today.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string"
+          },
+          "as_of": {
+            "type": "string",
+            "description": "Point-in-time cutoff (YYYY-MM-DD). Nothing dated after this is returned, preventing look-ahead bias. Defaults to today (UTC)."
+          }
+        },
+        "required": [
+          "symbol"
+        ]
+      }
+    },
+    {
+      "name": "get_macro_vintage",
+      "description": "Returns a macro series as it was actually published by as_of (vintage data, no revisions from the future). Optional start.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "series": {
+            "type": "string"
+          },
+          "start": {
+            "type": "string",
+            "description": "Optional start date."
+          },
+          "as_of": {
+            "type": "string",
+            "description": "Point-in-time cutoff (YYYY-MM-DD). Nothing dated after this is returned, preventing look-ahead bias. Defaults to today (UTC)."
+          }
+        },
+        "required": [
+          "series"
+        ]
+      }
+    },
+    {
+      "name": "get_quant_model",
+      "description": "The FinzData Quantitative Model as known on as_of: macro regime labels (financial conditions direction, financial risk direction, growth level and direction, inflation direction, macro quadrant GOLDILOCKS/REFLATION/STAGFLATION/SLOWDOWN, liquidity and credit), the growth/inflation nowcast, and the daily S&P 500 market stress probability (2-state Markov-switching). Labels are computed from each input as published on that date (no revisions from the future). Use it to answer 'what macro regime are we in', 'are financial conditions tightening', or to condition a backtest on regime.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "as_of": {
+            "type": "string",
+            "description": "Point-in-time cutoff (YYYY-MM-DD). Nothing dated after this is returned, preventing look-ahead bias. Defaults to today (UTC)."
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "get_cot",
+      "description": "Returns CFTC Commitments of Traders rows for a market between start and end, clipped to as_of. Max 5000 rows per page.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "market": {
+            "type": "string"
+          },
+          "start": {
+            "type": "string"
+          },
+          "end": {
+            "type": "string"
+          },
+          "as_of": {
+            "type": "string",
+            "description": "Point-in-time cutoff (YYYY-MM-DD). Nothing dated after this is returned, preventing look-ahead bias. Defaults to today (UTC)."
+          }
+        },
+        "required": [
+          "market",
+          "start"
+        ]
+      }
+    },
+    {
+      "name": "get_gex",
+      "description": "Point-in-time dealer gamma exposure for US stocks and ETFs, one row per ticker per session, each stamped with knowledge_time (17:00 New York on the session date). Columns: spot, net_gex_bn (dealer net gamma, $bn per 1% move; >0 dealers long gamma, <0 short), call_gex_bn, put_gex_bn, flip (gamma-flip level), call_wall, put_wall, pcr_oi, atm_iv_pct. Give ticker (+ start/end) for a time series, or date alone for every name that session ranked by |net_gex_bn|. Rows after as_of are hidden. A ticker series also returns `summary`: regime (long/short gamma), distance to the flip and walls, and a one-line read to quote. Free keys see the last 30 days; meta.upgrade then lists the available history options to show the user.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "ticker": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "description": "YYYY-MM-DD, cross-section mode"
+          },
+          "start": {
+            "type": "string"
+          },
+          "end": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "boolean",
+            "description": "add the plain-language read (default true)"
+          },
+          "as_of": {
+            "type": "string",
+            "description": "Point-in-time cutoff (YYYY-MM-DD). Nothing dated after this is returned, preventing look-ahead bias. Defaults to today (UTC)."
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "get_political_spending",
+      "description": "US election money, cleaned and rolled up (FEC + state and city filings; 2026 cycle plus 2022 and 2018). table: races (per House/Senate race: candidate receipts, outside spending for/against), candidates, donor_geo (donations by city/state/division/region), race_geo, flows (donor state -> race state), spending (campaign spending by category and vendor city), vendors, state_local (state and city contribution totals with in/out-of-state split), state_local_geo. Free keys get every race's totals and national/regional/state donor geography; deeper tables need a PoliSpend purchase.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "table": {
+            "type": "string",
+            "enum": [
+              "races",
+              "candidates",
+              "donor_geo",
+              "race_geo",
+              "flows",
+              "spending",
+              "vendors",
+              "state_local",
+              "state_local_geo"
+            ]
+          },
+          "cycle": {
+            "type": "integer",
+            "description": "Election cycle, e.g. 2026 (default), 2022, 2018."
+          },
+          "state": {
+            "type": "string",
+            "description": "2-letter state code filter."
+          },
+          "office": {
+            "type": "string",
+            "enum": [
+              "H",
+              "S"
+            ]
+          }
+        },
+        "required": [
+          "table"
+        ]
+      }
+    },
+    {
+      "name": "get_13f",
+      "description": "Returns 13F holdings matching a query as known on as_of (default today); filings after as_of are hidden.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "as_of": {
+            "type": "string",
+            "description": "Point-in-time cutoff (YYYY-MM-DD). Nothing dated after this is returned, preventing look-ahead bias. Defaults to today (UTC)."
+          }
+        },
+        "required": [
+          "query"
+        ]
+      }
+    },
+    {
+      "name": "get_events",
+      "description": "Returns events of one kind between start and end (YYYY-MM-DD), clipped to as_of. kind='earnings' (company report dates, symbol and timing) or kind='macro' (economic releases such as CPI, payrolls, FOMC). Max 5000 rows per page.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "earnings",
+              "macro"
+            ]
+          },
+          "all_releases": {
+            "type": "boolean",
+            "description": "kind=macro only: true returns every data release (hundreds a week); default returns market-moving releases (CPI, payrolls, GDP, PCE, retail sales, claims, ISM ...)."
+          },
+          "start": {
+            "type": "string"
+          },
+          "end": {
+            "type": "string"
+          },
+          "as_of": {
+            "type": "string",
+            "description": "Point-in-time cutoff (YYYY-MM-DD). Nothing dated after this is returned, preventing look-ahead bias. Defaults to today (UTC)."
+          }
+        },
+        "required": [
+          "kind",
+          "start"
+        ]
+      }
+    },
+    {
+      "name": "run_backtest",
+      "description": "Runs a deterministic backtest from a JSON spec (universe, start, end, signal, rebalance, top_n, costs_bps, side='long'|'long_short', blind=true to hide tickers). universe: a list of symbols, or 'top500'|'top1000'|'top3000'|'all' for the liquid US market (each month the N most-traded names priced >= min_price, default $5, by 63-day dollar volume; 'all' = liquid_top names, default 1000, max 3000; delisted names included while they traded; membership is set on each month's last trading day and used from the next). rebalance: D|W|M|Q (or daily/weekly/monthly/quarterly). signal.type: momentum (lookback, skip days), ma_cross, factor, or expr with signal.expr a formula over close prices, e.g. 'rank(ret(252)) - rank(vol(60))' (functions: ret, logret, sma, ema, vol, rsi, high, low, dist_high, lag, rank, zscore, demean, abs, log, sign, clip, min, max, where). Point-in-time fundamentals for US stocks (from 2011) work as expr variables and as signal.type factor fields (set ascending false to buy the highest): earnings_yield, book_to_market, sales_yield, ebitda_ev, dividend_yield, roe, leverage, log_mcap, e.g. 'rank(book_to_market) + rank(ret(252) - ret(21))'; such results carry a 'fundamentals' coverage and survivorship report. Every result includes 'overfitting': trials counted per API key and the deflated Sharpe ratio. Prices are fetched point-in-time with a 400-trading-day lookback buffer and clipped to as_of, so results have no look-ahead. Identical specs on the same snapshot are cached and free. Returns stats, benchmark stats, equity curve, warnings, snapshot id and a disclaimer.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "spec": {
+            "type": "object",
+            "description": "Backtest spec."
+          },
+          "dry_run": {
+            "type": "boolean",
+            "description": "true: check the spec and report what would run and what it would cost, without running it or charging. Default false."
+          },
+          "as_of": {
+            "type": "string",
+            "description": "Point-in-time cutoff (YYYY-MM-DD). Nothing dated after this is returned, preventing look-ahead bias. Defaults to today (UTC)."
+          }
+        },
+        "required": [
+          "spec"
+        ]
+      }
+    },
+    {
+      "name": "run_strategy",
+      "description": "Re-runs a public FinzData Hub strategy (slug from list_strategies) exactly as published, on its full point-in-time history through end (default today), on the server. Free on every tier, no API key needed. Returns stats, benchmark stats, equity curve, the published spec and the strategy page. To change parameters or test your own idea over full history use fork_strategy or run_backtest (free tier: last 12 months; full history with any purchase).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "description": "Strategy slug from list_strategies."
+          },
+          "end": {
+            "type": "string",
+            "description": "Last date to run through (YYYY-MM-DD). Default today."
+          },
+          "as_of": {
+            "type": "string",
+            "description": "Point-in-time cutoff (YYYY-MM-DD). Nothing dated after this is returned, preventing look-ahead bias. Defaults to today (UTC)."
+          }
+        },
+        "required": [
+          "slug"
+        ]
+      }
+    },
+    {
+      "name": "compare_runs",
+      "description": "Returns a table (run_id, cagr, sharpe, max_drawdown, turnover, final_equity) for previously run backtests in this session. Unknown run_id -> not_found.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "run_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "run_ids"
+        ]
+      }
+    },
+    {
+      "name": "publish_strategy",
+      "description": "Runs a backtest spec (same format as run_backtest) on the server and publishes it to the FinzData Hub as a public, reproducible strategy page at data.finzdata.com/s/<slug>, forward-tracked daily from today. Only server-computed results are stored. Costs one backtest; free accounts may publish 3 a day. visibility='private' keeps it unlisted.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "spec": {
+            "type": "object",
+            "description": "Backtest spec (see run_backtest)."
+          },
+          "title": {
+            "type": "string",
+            "description": "1-120 characters."
+          },
+          "description": {
+            "type": "string",
+            "description": "Hypothesis: why it should work and what would falsify it."
+          },
+          "visibility": {
+            "type": "string",
+            "enum": [
+              "public",
+              "private"
+            ]
+          },
+          "as_of": {
+            "type": "string",
+            "description": "Point-in-time cutoff (YYYY-MM-DD). Nothing dated after this is returned, preventing look-ahead bias. Defaults to today (UTC)."
+          }
+        },
+        "required": [
+          "spec",
+          "title"
+        ]
+      }
+    },
+    {
+      "name": "fork_strategy",
+      "description": "Copies a published Hub strategy, applies `changes` (nested fields merged, e.g. {\"signal\": {\"lookback\": 126}}), re-runs it on the server and publishes the fork linked to its parent. Costs one backtest.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "changes": {
+            "type": "object"
+          },
+          "title": {
+            "type": "string"
+          },
+          "as_of": {
+            "type": "string",
+            "description": "Point-in-time cutoff (YYYY-MM-DD). Nothing dated after this is returned, preventing look-ahead bias. Defaults to today (UTC)."
+          }
+        },
+        "required": [
+          "slug",
+          "changes"
+        ]
+      }
+    },
+    {
+      "name": "list_strategies",
+      "description": "Lists public FinzData Hub strategies. sort: benchmark (full record re-run nightly through today; strategies that beat their own benchmark on both return and Sharpe first, by Sharpe above the benchmark), robust (deflated Sharpe), forward (forward Sharpe, 63+ days of out-of-sample record), new, forks. Optional family (momentum, expr, ma_cross, factor). Each item carries vs_benchmark: the full-record verdict.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sort": {
+            "type": "string",
+            "enum": [
+              "benchmark",
+              "robust",
+              "forward",
+              "new",
+              "forks"
+            ]
+          },
+          "family": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "integer"
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "get_strategy",
+      "description": "Returns one public Hub strategy: spec, server-computed backtest result, forward-tracking record and fork lineage.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug"
+        ]
+      }
+    },
+    {
+      "name": "star_strategy",
+      "description": "Stars (or with unstar=true removes your star from) a public Hub strategy. Stars feed the Trending list; rankings stay on deflated Sharpe and forward record.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "unstar": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "slug"
+        ]
+      }
+    },
+    {
+      "name": "comment_strategy",
+      "description": "Posts a public comment (1-2000 characters) on a Hub strategy, e.g. a question, a result from a fork or a suggested change. Comments are shown under your handle.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug",
+          "body"
+        ]
+      }
+    },
+    {
+      "name": "survivorship_audit",
+      "description": "Runs your backtest spec twice: once on the point-in-time universe (delisted companies included while they traded, the honest result) and once on only the names still trading today (what a backtest on a current ticker list does). Returns both stats and the inflation in CAGR and Sharpe that survivorship bias adds. Use universe 'top500'|'top1000'|'top3000' or a symbol list. Costs one backtest.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "spec": {
+            "type": "object",
+            "description": "Backtest spec, same as run_backtest."
+          },
+          "dry_run": {
+            "type": "boolean",
+            "description": "true: check the spec and report what would run and what it would cost, without running it or charging. Default false."
+          },
+          "as_of": {
+            "type": "string",
+            "description": "Point-in-time cutoff (YYYY-MM-DD). Nothing dated after this is returned, preventing look-ahead bias. Defaults to today (UTC)."
+          }
+        },
+        "required": [
+          "spec"
+        ]
+      }
+    },
+    {
+      "name": "get_futures",
+      "description": "Daily OHLCV and open interest for 139 futures markets (CME, CBOT, NYMEX, COMEX, ICE, Eurex, Cboe): every individual contract since 2007 plus continuous back-adjusted series; interval=1min/5min/15min/30min/1hour gives intraday bars (2026-11-07). Give root (ES, NQ, YM, RTY, CL, GC, SI, NG, ZN, ZB, VX, 6E ...; a leading '/' is fine) for the continuous series, or contract (e.g. ESZ26) for one contract. Clipped to as_of. Free keys get recent days; full history with a purchase.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "root": {
+            "type": "string",
+            "description": "Futures root, e.g. ES, NQ, CL, GC, VX."
+          },
+          "contract": {
+            "type": "string",
+            "description": "Optional single contract, e.g. ESZ26."
+          },
+          "continuous": {
+            "type": "boolean",
+            "description": "Back-adjusted continuous series (default true when no contract)."
+          },
+          "interval": {
+            "type": "string",
+            "description": "Bar size: 1day (default), or intraday 1min, 5min, 15min, 30min, 1hour (full Globex session, US Eastern timestamps; intraday comes with a purchase of that market)."
+          },
+          "start": {
+            "type": "string"
+          },
+          "end": {
+            "type": "string"
+          },
+          "as_of": {
+            "type": "string",
+            "description": "Point-in-time cutoff (YYYY-MM-DD). Nothing dated after this is returned, preventing look-ahead bias. Defaults to today (UTC)."
+          }
+        },
+        "required": [
+          "root"
+        ]
+      }
+    },
+    {
+      "name": "get_futures_rolls",
+      "description": "Roll calendar for all 139 futures markets since 2007: for each front-month contract its first and last date as front month, expiry, the next contract, the roll date, trading days before expiry, and the back-adjustment added to its prices in the continuous series (adjusted = raw + back_adjustment). The current front month has an estimated next roll date. Give root (ES, CL, GC ...) or ALL for every market.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "root": {
+            "type": "string",
+            "description": "Futures root, e.g. ES, CL, GC, or ALL."
+          },
+          "start": {
+            "type": "string"
+          },
+          "end": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "root"
+        ]
+      }
+    },
+    {
+      "name": "get_crypto",
+      "description": "OHLCV bars for 512 crypto pairs (BTC-USD since 2013, ETH-USD since 2016, SOL-USD, XRP-USD, DOGE-USD, TON-USD, SUI-USD, HYPE-USD, BTC-EUR, ETH-BTC and more). interval: 1min, 5min, 15min, 30min, 1hour or 1day (default). Clipped to as_of. Free keys get daily bars for the last 12 months.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "Pair, e.g. BTC-USD."
+          },
+          "interval": {
+            "type": "string",
+            "enum": [
+              "1min",
+              "5min",
+              "15min",
+              "30min",
+              "1hour",
+              "1day"
+            ]
+          },
+          "start": {
+            "type": "string"
+          },
+          "end": {
+            "type": "string"
+          },
+          "as_of": {
+            "type": "string",
+            "description": "Point-in-time cutoff (YYYY-MM-DD). Nothing dated after this is returned, preventing look-ahead bias. Defaults to today (UTC)."
+          }
+        },
+        "required": [
+          "symbol"
+        ]
+      }
+    },
+    {
+      "name": "get_fx",
+      "description": "OHLC bars for 79 currency pairs (EURUSD, USDJPY, GBPUSD, AUDUSD, USDCAD, USDCHF, NZDUSD, EURJPY, USDCNH, USDMXN, USDINR, USDBRL, USDTRY, USDZAR and more) since January 2010. interval: 1min, 5min, 15min, 30min, 1hour or 1day (default). Times are US Eastern. Clipped to as_of. Free keys get daily bars for the last 12 months; paid keys get every bar size.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "Currency pair, e.g. EURUSD or USDJPY."
+          },
+          "interval": {
+            "type": "string",
+            "enum": [
+              "1min",
+              "5min",
+              "15min",
+              "30min",
+              "1hour",
+              "1day"
+            ]
+          },
+          "start": {
+            "type": "string"
+          },
+          "end": {
+            "type": "string"
+          },
+          "as_of": {
+            "type": "string",
+            "description": "Point-in-time cutoff (YYYY-MM-DD). Nothing dated after this is returned, preventing look-ahead bias. Defaults to today (UTC)."
+          }
+        },
+        "required": [
+          "symbol"
+        ]
+      }
+    },
+    {
+      "name": "get_index",
+      "description": "OHLC bars for 123 indexes: S&P 500 (SPX), Nasdaq-100 (NDX), Dow (DJI), Russell 2000 (RUT), VIX and its term structure (VIX9D, VIX3M, VIX6M, VIX1Y, VVIX, SKEW), sector and style indexes, DAX, AEX, the dollar index (DXY), Treasury yield indexes (TNX, FVX, TYX) and more. interval: 1min, 5min, 15min, 30min, 1hour or 1day (default). Times are US Eastern. Clipped to as_of. Free keys get daily bars for the last 12 months; paid keys get every bar size.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "Index symbol, e.g. SPX, NDX, VIX, RUT, DXY."
+          },
+          "interval": {
+            "type": "string",
+            "enum": [
+              "1min",
+              "5min",
+              "15min",
+              "30min",
+              "1hour",
+              "1day"
+            ]
+          },
+          "start": {
+            "type": "string"
+          },
+          "end": {
+            "type": "string"
+          },
+          "as_of": {
+            "type": "string",
+            "description": "Point-in-time cutoff (YYYY-MM-DD). Nothing dated after this is returned, preventing look-ahead bias. Defaults to today (UTC)."
+          }
+        },
+        "required": [
+          "symbol"
+        ]
+      }
+    },
+    {
+      "name": "get_ticks",
+      "description": "FinzData Ticks: every US trade print (time in UTC nanoseconds and ISO, price, size, exchange, condition codes) for 1,100+ US stocks and ETFs over the last 5 years. Give symbol and day (YYYY-MM-DD); optional start/end times (HH:MM, US Eastern) narrow the window; omit day to list the days available. Buyers get the trades; other keys get the day's trade count, first and last trade and the history options available. Free sample for every key: all trades on 2026-10-01 for SPY, QQQ, NVDA, AAPL, TSLA, MSFT, AMZN, META, AMD and IWM.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "US stock or ETF, e.g. NVDA, SPY."
+          },
+          "day": {
+            "type": "string",
+            "description": "Trading day YYYY-MM-DD; omit to list available days."
+          },
+          "start": {
+            "type": "string",
+            "description": "Optional start time HH:MM (US Eastern)."
+          },
+          "end": {
+            "type": "string",
+            "description": "Optional end time HH:MM (US Eastern)."
+          },
+          "as_of": {
+            "type": "string",
+            "description": "Point-in-time cutoff (YYYY-MM-DD). Nothing dated after this is returned, preventing look-ahead bias. Defaults to today (UTC)."
+          }
+        },
+        "required": [
+          "symbol"
+        ]
+      }
+    },
+    {
+      "name": "get_global_pulse",
+      "description": "FinzData Global Macro Pulse: real-world activity that leads the official statistics. dataset: chokepoints (daily ship transits through Suez, Panama, Hormuz, Malacca and 24 more since 2019), ports (daily port calls and estimated imports/exports for 2,000+ ports since 2019), port_calls (arrivals and hours in port from live ship tracking), air (daily flights by airport, airline, country, region), air_europe, air_us (US flights, cancellations and delays since 1987), road (toll and congestion-zone traffic: New York, Buenos Aires, Hong Kong, Stockholm, Gothenburg, Taiwan). match filters by name or id (e.g. Suez, Singapore, JFK); dim picks airport|airline|country|region for air data. Taiwan and Korea chip exports are macro series (get_macro_vintage).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "dataset": {
+            "type": "string",
+            "enum": [
+              "chokepoints",
+              "ports",
+              "port_calls",
+              "air",
+              "air_europe",
+              "air_us",
+              "road"
+            ]
+          },
+          "match": {
+            "type": "string",
+            "description": "Name or id filter, e.g. Suez Canal, Singapore, JFK, US."
+          },
+          "dim": {
+            "type": "string",
+            "description": "For air/air_us: airport, airline, country or region."
+          },
+          "start": {
+            "type": "string"
+          },
+          "end": {
+            "type": "string"
+          },
+          "as_of": {
+            "type": "string",
+            "description": "Point-in-time cutoff (YYYY-MM-DD). Nothing dated after this is returned, preventing look-ahead bias. Defaults to today (UTC)."
+          }
+        },
+        "required": [
+          "dataset"
+        ]
+      }
+    },
+    {
+      "name": "translate_stockcharts_scan",
+      "description": "Translates a StockCharts.com scan (e.g. '[type = stock] and [daily close > daily sma(50,daily close)] and [rsi(14) < 70] rank by [ROC(20)]') into a FinzData signal formula and a ready-to-run backtest spec. Returns expr, universe, notes, and any clauses not yet supported (never guessed). No data is fetched.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "scan": {
+            "type": "string",
+            "description": "StockCharts scan text."
+          },
+          "start": {
+            "type": "string",
+            "description": "Backtest start for the returned spec (default 2015-01-01)."
+          }
+        },
+        "required": [
+          "scan"
+        ]
+      }
+    },
+    {
+      "name": "backtest_stockcharts_scan",
+      "description": "Backtests a StockCharts.com scan on point-in-time US stocks since 2000, delisted names included: each rebalance (weekly by default) holds the stocks that pass the scan, equally weighted up to top_n, 10 bps costs. Optional symbols (e.g. a ChartList) restricts the universe. Returns the translation plus the same stats, benchmark and equity curve as run_backtest. Costs one backtest.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "scan": {
+            "type": "string",
+            "description": "StockCharts scan text."
+          },
+          "start": {
+            "type": "string"
+          },
+          "end": {
+            "type": "string"
+          },
+          "symbols": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional universe, e.g. a ChartList."
+          },
+          "top_n": {
+            "type": "integer",
+            "description": "Max names held (default 50)."
+          },
+          "rebalance": {
+            "type": "string",
+            "enum": [
+              "D",
+              "W",
+              "M",
+              "Q"
+            ]
+          },
+          "as_of": {
+            "type": "string",
+            "description": "Point-in-time cutoff (YYYY-MM-DD). Nothing dated after this is returned, preventing look-ahead bias. Defaults to today (UTC)."
+          }
+        },
+        "required": [
+          "scan",
+          "start"
+        ]
+      }
+    },
+    {
+      "name": "register_strategy",
+      "description": "Register a new strategy signal. The strategy is scored ONLY on data after registration, the record can never be edited or deleted, ranking starts at 63 trading sessions, and FinzData never trades on submitted signals.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "agent_name": {
+            "type": "string"
+          },
+          "signal": {
+            "type": "string"
+          },
+          "universe": {
+            "type": "string",
+            "enum": [
+              "top500",
+              "top1000",
+              "top3000",
+              "all"
+            ]
+          },
+          "rebalance": {
+            "type": "string",
+            "enum": [
+              "daily",
+              "weekly",
+              "monthly"
+            ]
+          },
+          "side": {
+            "type": "string",
+            "enum": [
+              "long",
+              "long_short"
+            ]
+          },
+          "top_frac": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 0.5
+          }
+        },
+        "required": [
+          "agent_name",
+          "signal",
+          "universe",
+          "rebalance",
+          "side",
+          "top_frac"
+        ]
+      }
+    },
+    {
+      "name": "get_verified_record",
+      "description": "Retrieve a verified strategy record by its ID.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "record_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "record_id"
+        ]
+      }
+    },
+    {
+      "name": "verified_board",
+      "description": "Get the leaderboard of verified strategies.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "verify_chain",
+      "description": "Anyone can check no record was edited or back-dated.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    },
+    {
+      "name": "retire_strategy",
+      "description": "Retire one of your verified strategy records: it stops accruing new forward results, keeps its full history and stays public on the Verified board marked retired.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "record_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "record_id"
+        ]
+      }
+    },
+    {
+      "name": "search_mcp_servers",
+      "description": "finds financial MCP servers graded nightly by FinzData for health, protocol conformance and prompt-injection risk; results include install URLs.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "market-data",
+              "fundamentals",
+              "macro",
+              "crypto",
+              "trading",
+              "options",
+              "news-sentiment",
+              "portfolio-risk",
+              "fx-commodities"
+            ]
+          },
+          "min_grade": {
+            "type": "string",
+            "enum": [
+              "A",
+              "B",
+              "C",
+              "D",
+              "F"
+            ]
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 10
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "get_mcp_server",
+      "description": "retrieves a financial MCP server listing with tools, probe history, issues and verified-data status.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug"
+        ]
+      }
+    },
+    {
+      "name": "claim_mcp_server",
+      "description": "claims a listing for the calling API key so its owner can enable price-accuracy checks; first claimant wins; contact info@finzdata.com to dispute.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug"
+        ]
+      }
+    }
+  ]
+}
