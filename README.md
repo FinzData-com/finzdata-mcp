@@ -1,5 +1,3 @@
-<p align="center"><img src="https://finzdata.com/assets/brand/finzdata-logo-full.png" alt="FinzData" width="420"></p>
-
 # FinzData MCP server
 
 <p align="center"><img src="https://finzdata.com/assets/brand/finzdata-logo-full-square.png" alt="FinzData" width="180"></p>
@@ -12,29 +10,6 @@ Research-grade US market data and server-side backtests for AI agents: Claude, C
 **Remote server:** `https://api.finzdata.com/mcp` (Streamable HTTP, MCP 2026-07-28, accepts 2025-06-18 clients)
 **Auth:** OAuth 2.1 with PKCE (sign in with your FinzData API key), or the header `Authorization: Bearer YOUR_API_KEY`
 **Free key:** https://finzdata.com/signin · Pricing: https://finzdata.com/shop · Agent docs: https://api.finzdata.com/agents.md
-
-## Coverage
-
-Market data your backtests can trust: the whole market, remembered, point in time.
-
-- **US stocks:** all 16,000+ that have traded on NYSE and Nasdaq since January 2000, delisted included. Tick trades (every print) for 1,100+ stocks and ETFs over 5 years.
-- **ETFs:** 5,100+, with fund and ETF holdings (SEC N-PORT).
-- **Futures:** 139 markets with every contract since 2007, roll schedules and energy curves, spreads and cracks.
-- **Options:** point-in-time options gamma (GEX) for single stocks, ETFs and the major indexes (gamma flip, call and put walls, net gamma, open interest, put/call, ATM IV), plus end-of-day options chains.
-- **Volatility:** the VIX and Cboe volatility indexes with the VIX futures curve.
-- **Indexes:** 123 (SPX, NDX, DJI, RUT, VIX term structure, DXY, TNX and more).
-- **FX:** 79 currency pairs since 2010.
-- **Crypto:** 512 pairs, Bitcoin since 2013 and Ethereum since 2016.
-- **Positioning and ownership:** CFTC COT since 1986, 13F holdings, insider transactions, FINRA short interest and margin debt.
-- **Fundamentals:** SEC fundamentals as filed, daily point-in-time valuation ratios, earnings dates.
-- **Macro:** 22,700+ series with every vintage kept: inflation, jobs, GDP, housing, consumer, rates, M1/M2/M3, Fed liquidity, Taiwan and Korea chip and AI exports, trade, energy (EIA inventories incl. Cushing, natural gas storage, power grid by ISO, world fuel and electricity demand), financial stress and government debt.
-- **Quantitative Model:** macro regime labels, nowcast and market-stress probability.
-- **Global Macro Pulse:** daily ship transits through 28 chokepoints since 2019, port calls and trade estimates for 2,000+ ports, daily flights by airport, airline and country, US flight delays since 1987, and toll and congestion traffic.
-- **Politics:** congressional trades and election spending.
-- **Bars:** tick, 1, 5, 15 and 30-minute, hourly and daily. Server-side backtests with no look-ahead.
-
-In pandas with one line: `pip install finzdata`. Built for AI, quants, data scientists and financial analysts who backtest. Clean data. Real insights. Real alpha.
-
 
 ## Coverage: everything FinzData covers
 
